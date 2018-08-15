@@ -64,7 +64,8 @@ class QRCodeWindow(QWidget):
 		self.vbox = QVBoxLayout()
 
 		# Get QR Code Image
-		img = qrimage.get_qrimage("abcd")
+		ip_address = ipaddress.get_ip()
+		img = qrimage.get_qrimage(ip_address)
 
 		# Create QRCode Image Holder
 		self.qrcode_image_holder = QLabel()
@@ -79,8 +80,6 @@ class QRCodeWindow(QWidget):
 
 		# Close Button
 		self.close_button = QPushButton("Close")
-		# self.close_button.setFixedWidth(100)
-		# self.close_button.setMaximumWidth(100)
 		self.close_button.clicked.connect(self.close_window)
 
 		self.vbox.addWidget(self.qrcode_image_holder)
@@ -89,6 +88,7 @@ class QRCodeWindow(QWidget):
 		self.vbox.setAlignment(Qt.AlignCenter)
 
 		self.main_window.setLayout(self.vbox)
+		self.main_window.setWindowFlags(Qt.FramelessWindowHint)
 		self.main_window.show()
  
 	def close_window(self):
@@ -100,7 +100,7 @@ class SystemTrayWindow():
 
 	def __init__(self):
 
-		self.icon = QIcon("save2.png")
+		self.icon = QIcon("icon.png")
 
 		self.tray = QSystemTrayIcon()
 		self.tray.setIcon(self.icon)
