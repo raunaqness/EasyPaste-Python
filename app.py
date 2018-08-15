@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 import time
 import traceback, sys
 
+from helpers import ipaddress
 
 class WorkerSignals(QObject):
 
@@ -57,15 +58,23 @@ class SystemTrayWindow():
 		self.quit_button = QAction("Quit")
 		self.quit_button.triggered.connect(self.exit)
 
+		self.IP_button = QAction("IP")
+		self.IP_button.triggered.connect(self.get_ip_address_as_qrcode)
+
 		self.about_button = QAction("About")
 		self.about_button.triggered.connect(self.about)
 
+		self.menu.addAction(self.IP_button)
 		self.menu.addAction(self.about_button)
 		self.menu.addSeparator()
 		self.menu.addAction(self.quit_button)
 		
 
 		self.tray.setContextMenu(self.menu)
+
+	def get_ip_address_as_qrcode(self):
+		ip = ipaddress.get_ip()
+		print(ip)
 
 	def exit(self):
 		sys.exit()
