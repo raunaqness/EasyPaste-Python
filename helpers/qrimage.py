@@ -1,5 +1,7 @@
 import qrcode
+from PIL.ImageQt import ImageQt
 
-def create_qrimage(text):
+def get_qrimage(text):
 	img = qrcode.make(text)
-	return(img)
+	qimg = ImageQt(img)
+	return(qimg)

@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import time
-import traceback, sys
+import traceback, sys, os
 
-from helpers import ipaddress
+from helpers import ipaddress, qrimage
 
 class WorkerSignals(QObject):
 
@@ -13,7 +13,6 @@ class WorkerSignals(QObject):
 	error = pyqtSignal(tuple)
 	result = pyqtSignal(object)
 	progress = pyqtSignal(int)
-
 
 class Worker(QRunnable):
 
@@ -43,6 +42,60 @@ class Worker(QRunnable):
 		finally:
 			self.signals.finished.emit()  # Done
 
+class QRCodeWindow(QWidget):
+ 
+	def __init__(self):
+		super().__init__()
+		self.initUI()
+ 
+	def initUI(self):
+		#Make Window Frameless
+		self.setWindowFlags(Qt.FramelessWindowHint)
+
+		# Put Window in the Centre of the screen
+		frameGm = self.frameGeometry()
+		screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+		centerPoint = QApplication.desktop().screenGeometry(screen).center()
+		frameGm.moveCenter(centerPoint)
+
+		self.move(frameGm.topLeft())
+
+		self.main_window = QWidget()
+		self.vbox = QVBoxLayout()
+
+		# Get QR Code Image
+		img = qrimage.get_qrimage("abcd")
+
+		# Create QRCode Image Holder
+		self.qrcode_image_holder = QLabel()
+		self.pixmap = QPixmap.fromImage(img)
+		self.qrcode_image_holder.setPixmap(self.pixmap)
+		self.qrcode_image_holder.resize(self.pixmap.width(), self.pixmap.height())
+
+		# Description 
+		self.description = QLabel()
+		self.description.setText("Scan the QR Code with EasyPaste Android App to Connect")
+		self.description.setAlignment(Qt.AlignCenter)
+
+		# Close Button
+		self.close_button = QPushButton("Close")
+		# self.close_button.setFixedWidth(100)
+		# self.close_button.setMaximumWidth(100)
+		self.close_button.clicked.connect(self.close_window)
+
+		self.vbox.addWidget(self.qrcode_image_holder)
+		self.vbox.addWidget(self.description)
+		self.vbox.addWidget(self.close_button)
+		self.vbox.setAlignment(Qt.AlignCenter)
+
+		self.main_window.setLayout(self.vbox)
+		self.main_window.show()
+ 
+	def close_window(self):
+		self.main_window.hide()
+		# self.show()
+
+
 class SystemTrayWindow():
 
 	def __init__(self):
@@ -55,22 +108,30 @@ class SystemTrayWindow():
 
 		self.menu = QMenu()
 
-		self.quit_button = QAction("Quit")
-		self.quit_button.triggered.connect(self.exit)
-
+		# Button Definitions
 		self.IP_button = QAction("IP")
 		self.IP_button.triggered.connect(self.get_ip_address_as_qrcode)
+
+		self.qrwindow_button = QAction("QR Code")
+		self.qrwindow_button.triggered.connect(self.open_qrcode_window)
 
 		self.about_button = QAction("About")
 		self.about_button.triggered.connect(self.about)
 
+		self.quit_button = QAction("Quit")
+		self.quit_button.triggered.connect(self.exit)
+
+		# Adding Button Actions 
+		self.menu.addAction(self.qrwindow_button)
 		self.menu.addAction(self.IP_button)
 		self.menu.addAction(self.about_button)
 		self.menu.addSeparator()
 		self.menu.addAction(self.quit_button)
 		
-
 		self.tray.setContextMenu(self.menu)
+
+	def open_qrcode_window(self):
+		self.qrcode_window = QRCodeWindow()
 
 	def get_ip_address_as_qrcode(self):
 		ip = ipaddress.get_ip()
