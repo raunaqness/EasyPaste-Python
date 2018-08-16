@@ -112,7 +112,7 @@ class SystemTrayWindow():
 		self.IP_button = QAction("IP")
 		self.IP_button.triggered.connect(self.get_ip_address_as_qrcode)
 
-		self.qrwindow_button = QAction("QR Code")
+		self.qrwindow_button = QAction("Connect")
 		self.qrwindow_button.triggered.connect(self.open_qrcode_window)
 
 		self.about_button = QAction("About")
@@ -123,9 +123,9 @@ class SystemTrayWindow():
 
 		# Adding Button Actions 
 		self.menu.addAction(self.qrwindow_button)
-		self.menu.addAction(self.IP_button)
-		self.menu.addAction(self.about_button)
+		# self.menu.addAction(self.IP_button)
 		self.menu.addSeparator()
+		self.menu.addAction(self.about_button)
 		self.menu.addAction(self.quit_button)
 		
 		self.tray.setContextMenu(self.menu)

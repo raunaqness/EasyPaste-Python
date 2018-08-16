@@ -12,13 +12,13 @@ local_fqdn = socket.getfqdn()
 
 # get the according IP address
 # ip_address = socket.gethostbyname(local_hostname)
-ip_address = "192.168.0.102"
+ip_address = "192.168.0.104"
 
 # output hostname, domain name and IP address
 print ("working on %s (%s) with %s" % (local_hostname, local_fqdn, ip_address))
 
 # bind the socket to the port 23456
-server_address = (ip_address, 7800)  
+server_address = (ip_address, 3333)  
 print ('starting up on %s port %s' % server_address)  
 sock.bind(server_address)
 
