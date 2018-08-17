@@ -53,9 +53,7 @@ class QRCodeWindow(QWidget):
 		self.initUI()
  
 	def initUI(self):
-		#Make Window Frameless
-		self.setWindowFlags(Qt.FramelessWindowHint)
-
+		
 		# Put Window in the Centre of the screen
 		frameGm = self.frameGeometry()
 		screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
@@ -89,7 +87,14 @@ class QRCodeWindow(QWidget):
 		self.vbox.addWidget(self.qrcode_image_holder)
 		self.vbox.addWidget(self.description)
 		self.vbox.addWidget(self.close_button)
+
+		self.qrcode_image_holder.setAlignment(Qt.AlignCenter)
+		self.description.setAlignment(Qt.AlignCenter)
 		self.vbox.setAlignment(Qt.AlignCenter)
+
+		self.palette = QPalette()
+		self.palette.setColor(QPalette.Background, Qt.white)
+		self.main_window.setPalette(self.palette)
 
 		self.main_window.setLayout(self.vbox)
 		self.main_window.setWindowFlags(Qt.FramelessWindowHint)
@@ -112,15 +117,13 @@ class SystemTrayWindow():
 
 		self.menu = QMenu()
 
-
-
 		# socket variable definitions
 		self.threadpool = QThreadPool()
 
 		self.socket_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.socket_receive = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-		self.ip_address = "192.168.0.102"
+		self.ip_address = ipaddress.get_ip()
 		self.server_address_send = (self.ip_address, 1234)
 
 		self.server_address_receive = (self.ip_address, 1234)
@@ -151,9 +154,7 @@ class SystemTrayWindow():
 		self.initialize_socket_worker()
 
 	def initialize_socket_worker(self):
-
 		socket_worker = Worker(self.main_socket_function_to_thread)
-
 		self.threadpool.start(socket_worker)
 		
 
