@@ -2,6 +2,16 @@
 import socket  
 import time
 
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+server_address = ("192.168.0.102", 1234)
+sock.connect(server_address)
+sock.sendall("GGWP".encode("utf-8"))
+
+sock.close()
+
+'''
+
 # create TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -32,5 +42,5 @@ for entry in temperature_data:
 # close connection
 sock.close() 
 
-
+'''
 

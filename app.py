@@ -5,6 +5,10 @@ from PyQt5.QtCore import *
 import time
 import traceback, sys, os
 
+import socket  
+import time
+import subprocess
+
 from helpers import ipaddress, qrimage
 
 class WorkerSignals(QObject):
@@ -26,7 +30,7 @@ class Worker(QRunnable):
 		self.signals = WorkerSignals()
 
 		# Add the callback to our kwargs
-		self.kwargs['progress_callback'] = self.signals.progress
+		# self.kwargs['progress_callback'] = self.signals.progress
 
 	@pyqtSlot()
 	def run(self):
@@ -95,8 +99,8 @@ class QRCodeWindow(QWidget):
 		self.main_window.hide()
 		# self.show()
 
-
 class SystemTrayWindow():
+
 
 	def __init__(self):
 
@@ -108,10 +112,24 @@ class SystemTrayWindow():
 
 		self.menu = QMenu()
 
-		# Button Definitions
-		self.IP_button = QAction("IP")
-		self.IP_button.triggered.connect(self.get_ip_address_as_qrcode)
 
+
+		# socket variable definitions
+		self.threadpool = QThreadPool()
+
+		self.socket_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.socket_receive = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+		self.ip_address = "192.168.0.102"
+		self.server_address_send = (self.ip_address, 1234)
+
+		self.server_address_receive = (self.ip_address, 1234)
+		self.socket_receive.bind(self.server_address_receive)
+		self.socket_receive.listen(1)
+
+		self.last_message = ""
+
+		# Button Definitions
 		self.qrwindow_button = QAction("Connect")
 		self.qrwindow_button.triggered.connect(self.open_qrcode_window)
 
@@ -130,17 +148,56 @@ class SystemTrayWindow():
 		
 		self.tray.setContextMenu(self.menu)
 
+		self.initialize_socket_worker()
+
+	def initialize_socket_worker(self):
+
+		socket_worker = Worker(self.main_socket_function_to_thread)
+
+		self.threadpool.start(socket_worker)
+		
+
+	# Socket Functions
+
+	def main_socket_function_to_thread(self):
+
+		while True:
+			latest_message = self.get_from_socket()
+			print("latest_message : {}".format(latest_message))
+
+			if latest_message is not self.last_message:
+				self.last_message = latest_message
+				self.send_to_clipboard(latest_message)
+
+			time.sleep(3)
+
+	def get_from_socket(self):
+		print("Getting from Socket")
+		try:
+			connection, client_address = self.socket_receive.accept()
+			data = connection.recv(64)
+			print(data)
+			return(str(data))
+		except:
+			print("No data Received")
+
+	def send_to_clipboard(self, message):
+		cmd = 'echo "{}" | pbcopy'.format(message)
+		subprocess.call(cmd, shell=True)
+		print("Sent to clipboard : {}".format(message))
+
+
+
+	# Helper Functions
+
 	def open_qrcode_window(self):
 		self.qrcode_window = QRCodeWindow()
-
-	def get_ip_address_as_qrcode(self):
-		ip = ipaddress.get_ip()
-		print(ip)
 
 	def exit(self):
 		sys.exit()
 
 	def about(self):
+		# TODO
 		pass
 
 

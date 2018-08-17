@@ -5,11 +5,11 @@ import subprocess
 socket_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socket_receive = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-ip_address = '0.0.0.0'
+ip_address = "192.168.0.102"
 server_address_send = (ip_address, 1234)
 
 # For Receiving
-server_address_receive = (ip_address, 4567)
+server_address_receive = (ip_address, 1234)
 socket_receive.bind(server_address_receive)
 socket_receive.listen(1)
 
@@ -45,11 +45,8 @@ def get_from_socket():
 	print("Getting from Socket")
 
 	try:
-		print("1")
 		connection, client_address = socket_receive.accept()
-		print("2")
 		data = connection.recv(64)
-		print("3")
 		print(data)
 		return(str(data))
 
