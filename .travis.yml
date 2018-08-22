@@ -4,4 +4,4 @@ python:
   - 3.6
 
 script:
-  - test_app
+  - python test_app.py
