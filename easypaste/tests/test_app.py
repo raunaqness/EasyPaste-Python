@@ -1,5 +1,7 @@
-import unittest
+import sys
+sys.path.append("..")
 
+import unittest
 import app
 
 class TestApp(unittest.TestCase):

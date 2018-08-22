@@ -9,7 +9,7 @@ import socket
 import time
 import subprocess
 
-from helpers import ipaddress, qrimage
+from utils import ipaddress, qrimage
 
 class testclass():
 
@@ -122,7 +122,7 @@ class SystemTrayWindow():
 
 	def __init__(self):
 
-		self.icon = QIcon("icon.png")
+		self.icon = QIcon("images/icon.png")
 
 		self.tray = QSystemTrayIcon()
 		self.tray.setIcon(self.icon)
