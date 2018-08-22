@@ -11,6 +11,9 @@ import subprocess
 
 from helpers import ipaddress, qrimage
 
+def add(a, b):
+	return(a+b)
+
 class WorkerSignals(QObject):
 
 	finished = pyqtSignal()
@@ -97,7 +100,7 @@ class QRCodeWindow(QWidget):
 		self.main_window.setPalette(self.palette)
 
 		self.main_window.setLayout(self.vbox)
-		self.main_window.setWindowFlags(Qt.FramelessWindowHint)
+		# self.main_window.setWindowFlags(Qt.FramelessWindowHint)
 		self.main_window.show()
  
 	def close_window(self):
@@ -170,7 +173,7 @@ class SystemTrayWindow():
 				self.last_message = latest_message
 				self.send_to_clipboard(latest_message)
 
-			time.sleep(3)
+			time.sleep(1)
 
 	def get_from_socket(self):
 		print("Getting from Socket")
@@ -265,10 +268,10 @@ class MainWindow(QMainWindow):
 		self.counter +=1
 		self.l.setText("Counter: %d" % self.counter)
 
+if __name__ == "__main__":
+	app = QApplication([])
 
-app = QApplication([])
+	# window = MainWindow()
+	tray = SystemTrayWindow()
 
-# window = MainWindow()
-tray = SystemTrayWindow()
-
-app.exec_()
+	app.exec_()
