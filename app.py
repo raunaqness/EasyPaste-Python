@@ -11,6 +11,12 @@ import subprocess
 
 from helpers import ipaddress, qrimage
 
+class testclass():
+
+	def add(self, a, b):
+		return(a+b)
+
+
 def add(a, b):
 	return(a+b)
 
@@ -106,6 +112,10 @@ class QRCodeWindow(QWidget):
 	def close_window(self):
 		self.main_window.hide()
 		# self.show()
+
+	def divide(self, a, b):
+		if(b is not 0):
+			return(a/b)
 
 class SystemTrayWindow():
 
