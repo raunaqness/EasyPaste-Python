@@ -17,9 +17,6 @@ class testclass():
 		return(a+b)
 
 
-def add(a, b):
-	return(a+b)
-
 class WorkerSignals(QObject):
 
 	finished = pyqtSignal()

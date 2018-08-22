@@ -4,4 +4,4 @@ python:
   - 3.6
 
 script:
-  - python test_app.py
+  - python easypaste/tests/test_app.py
