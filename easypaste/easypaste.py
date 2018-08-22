@@ -9,7 +9,7 @@ import socket
 import time
 import subprocess
 
-from utils import ipaddress, qrimage
+# from utils import ipaddress, qrimage
 
 class testclass():
 
