@@ -11,6 +11,21 @@ import subprocess
 
 from utils import ipaddress, qrimage
 
+class FlaskThread(QThread):
+	def __init__(self, application):
+		print("FlaskThread init")
+		self.host = "192.168.0.101"
+		self.port = 1234
+
+		QThread.__init__(self)
+		self.application = application
+
+	def __del__(self):
+		self.wait()
+
+	def run(self):
+		self.application.run(host=self.host, port=self.port, debug=False)
+
 class WorkerSignals(QObject):
 
 	finished = pyqtSignal()
@@ -120,18 +135,20 @@ class SystemTrayWindow():
 
 		self.menu = QMenu()
 
-		# socket variable definitions
 		self.threadpool = QThreadPool()
 
-		self.socket_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.socket_receive = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		# socket variable definitions
+		
+		# self.socket_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		# self.socket_receive = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-		self.ip_address = ipaddress.get_ip()
-		self.server_address_send = (self.ip_address, 1234)
+		# self.ip_address = ipaddress.get_ip()
+		# # self.server_address_send = (self.ip_address, 1234)
+		# self.server_address_send = ("0.0.0.0", 7000)
 
-		self.server_address_receive = (self.ip_address, 1234)
-		self.socket_receive.bind(self.server_address_receive)
-		self.socket_receive.listen(1)
+		# self.server_address_receive = (self.ip_address, 1234)
+		# self.socket_receive.bind(self.server_address_receive)
+		# self.socket_receive.listen(1)
 
 		self.last_message = ""
 
@@ -154,7 +171,19 @@ class SystemTrayWindow():
 		
 		self.tray.setContextMenu(self.menu)
 
-		self.initialize_socket_worker()
+		# self.initialize_socket_worker()
+		self.start_flask()
+
+	def start_flask(self):
+		flask_worker = Worker(self.flask_thread)
+		self.threadpool.start(flask_worker)
+
+	def flask_thread(self):
+		from helpers.routes import app 
+		self.host = "192.168.0.101"
+		self.port = 1234
+		app.run(host=self.host, port=self.port)
+
 
 	def initialize_socket_worker(self):
 		socket_worker = Worker(self.main_socket_function_to_thread)
@@ -287,6 +316,9 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
 	app = QApplication([])
+
+	from helpers.routes import app as flaskapp
+	FlaskThread(flaskapp)
 
 	# window = MainWindow()
 	tray = SystemTrayWindow()
