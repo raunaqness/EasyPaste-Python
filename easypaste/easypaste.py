@@ -11,21 +11,6 @@ import subprocess
 
 from utils import ipaddress, qrimage
 
-class FlaskThread(QThread):
-	def __init__(self, application):
-		print("FlaskThread init")
-		self.host = "192.168.0.101"
-		self.port = 1234
-
-		QThread.__init__(self)
-		self.application = application
-
-	def __del__(self):
-		self.wait()
-
-	def run(self):
-		self.application.run(host=self.host, port=self.port, debug=False)
-
 class WorkerSignals(QObject):
 
 	finished = pyqtSignal()
@@ -137,19 +122,6 @@ class SystemTrayWindow():
 
 		self.threadpool = QThreadPool()
 
-		# socket variable definitions
-		
-		# self.socket_send = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		# self.socket_receive = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-		# self.ip_address = ipaddress.get_ip()
-		# # self.server_address_send = (self.ip_address, 1234)
-		# self.server_address_send = ("0.0.0.0", 7000)
-
-		# self.server_address_receive = (self.ip_address, 1234)
-		# self.socket_receive.bind(self.server_address_receive)
-		# self.socket_receive.listen(1)
-
 		self.last_message = ""
 
 		# Button Definitions
@@ -171,10 +143,11 @@ class SystemTrayWindow():
 		
 		self.tray.setContextMenu(self.menu)
 
-		# self.initialize_socket_worker()
-		self.start_flask()
+		self.start_flask_thread()
 
-	def start_flask(self):
+	# Worker Functions and Definitions
+
+	def start_flask_thread(self):
 		flask_worker = Worker(self.flask_thread)
 		self.threadpool.start(flask_worker)
 
@@ -184,46 +157,8 @@ class SystemTrayWindow():
 		self.port = 1234
 		app.run(host=self.host, port=self.port)
 
-
-	def initialize_socket_worker(self):
-		socket_worker = Worker(self.main_socket_function_to_thread)
-		self.threadpool.start(socket_worker)
+	# Helper Functions	
 		
-
-	# Socket Functions
-
-	def main_socket_function_to_thread(self):
-		
-
-		while True:
-			# try:
-			from_socket = self.get_from_socket()
-			from_clipboard = self.get_from_clipboard()
-
-			print("from socket : {}".format(from_socket))
-			print("from clipboard : {}".format(from_clipboard))
-
-			if from_socket is not from_clipboard:
-				print("huehue")
-				# Copy hua hai kahi pe
-
-
-
-			time.sleep(3)
-			# except:
-			# 	print("Error : main_socket_function_to_thread()")
-
-	def get_from_socket(self):
-		print("Getting from Socket")
-		connection, client_address = self.socket_receive.accept()
-		try:
-			
-			data = connection.recv(64)
-			print(data)
-			return(str(data))
-		except:
-			print("No data Received")
-
 	def get_from_clipboard(self):
 		cmd = 'pbpaste'
 		output = subprocess.check_output(cmd, shell=True)
@@ -233,8 +168,6 @@ class SystemTrayWindow():
 		cmd = 'echo "{}" | pbcopy'.format(message)
 		subprocess.call(cmd, shell=True)
 		print("Sent to clipboard : {}".format(message))
-
-	# Helper Functions
 
 	def open_qrcode_window(self):
 		self.qrcode_window = QRCodeWindow()
@@ -251,76 +184,9 @@ class testclass():
 	def add(self, a, b):
 		return(a+b)
 
-class MainWindow(QMainWindow):
-
-
-	def __init__(self, *args, **kwargs):
-		super(MainWindow, self).__init__(*args, **kwargs)
-
-		self.counter = 0
-
-		layout = QVBoxLayout()
-
-		self.l = QLabel("Start")
-		b = QPushButton("DANGER!")
-		b.pressed.connect(self.oh_no)
-
-		layout.addWidget(self.l)
-		layout.addWidget(b)
-
-		w = QWidget()
-		w.setLayout(layout)
-
-		self.setCentralWidget(w)
-
-		self.show()
-
-		self.threadpool = QThreadPool()
-		print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
-
-		self.timer = QTimer()
-		self.timer.setInterval(1000)
-		self.timer.timeout.connect(self.recurring_timer)
-		self.timer.start()
-
-	def progress_fn(self, n):
-		print("%d%% done" % n)
-
-	def execute_this_fn(self, progress_callback):
-		for n in range(0, 5):
-			time.sleep(1)
-			progress_callback.emit(n*100/4)
-
-		return "Done."
-
-	def print_output(self, s):
-		print(s)
-
-	def thread_complete(self):
-		print("THREAD COMPLETE!")
-
-	def oh_no(self):
-		# Pass the function to execute
-		worker = Worker(self.execute_this_fn) # Any other args, kwargs are passed to the run function
-		worker.signals.result.connect(self.print_output)
-		worker.signals.finished.connect(self.thread_complete)
-		worker.signals.progress.connect(self.progress_fn)
-
-		# Execute
-		self.threadpool.start(worker)
-
-
-	def recurring_timer(self):
-		self.counter +=1
-		self.l.setText("Counter: %d" % self.counter)
-
 if __name__ == "__main__":
 	app = QApplication([])
 
-	from helpers.routes import app as flaskapp
-	FlaskThread(flaskapp)
-
-	# window = MainWindow()
 	tray = SystemTrayWindow()
 
 	app.exec_()
