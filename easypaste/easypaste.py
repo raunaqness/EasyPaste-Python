@@ -9,13 +9,7 @@ import socket
 import time
 import subprocess
 
-# from utils import ipaddress, qrimage
-
-class testclass():
-
-	def add(self, a, b):
-		return(a+b)
-
+from utils import ipaddress, qrimage
 
 class WorkerSignals(QObject):
 
@@ -116,7 +110,6 @@ class QRCodeWindow(QWidget):
 
 class SystemTrayWindow():
 
-
 	def __init__(self):
 
 		self.icon = QIcon("images/icon.png")
@@ -171,33 +164,46 @@ class SystemTrayWindow():
 	# Socket Functions
 
 	def main_socket_function_to_thread(self):
+		
 
 		while True:
-			latest_message = self.get_from_socket()
-			print("latest_message : {}".format(latest_message))
+			# try:
+			from_socket = self.get_from_socket()
+			from_clipboard = self.get_from_clipboard()
 
-			if latest_message is not self.last_message:
-				self.last_message = latest_message
-				self.send_to_clipboard(latest_message)
+			print("from socket : {}".format(from_socket))
+			print("from clipboard : {}".format(from_clipboard))
 
-			time.sleep(1)
+			if from_socket is not from_clipboard:
+				print("huehue")
+				# Copy hua hai kahi pe
+
+
+
+			time.sleep(3)
+			# except:
+			# 	print("Error : main_socket_function_to_thread()")
 
 	def get_from_socket(self):
 		print("Getting from Socket")
+		connection, client_address = self.socket_receive.accept()
 		try:
-			connection, client_address = self.socket_receive.accept()
+			
 			data = connection.recv(64)
 			print(data)
 			return(str(data))
 		except:
 			print("No data Received")
 
+	def get_from_clipboard(self):
+		cmd = 'pbpaste'
+		output = subprocess.check_output(cmd, shell=True)
+		return(output)
+
 	def send_to_clipboard(self, message):
 		cmd = 'echo "{}" | pbcopy'.format(message)
 		subprocess.call(cmd, shell=True)
 		print("Sent to clipboard : {}".format(message))
-
-
 
 	# Helper Functions
 
@@ -211,6 +217,10 @@ class SystemTrayWindow():
 		# TODO
 		pass
 
+class testclass():
+
+	def add(self, a, b):
+		return(a+b)
 
 class MainWindow(QMainWindow):
 
