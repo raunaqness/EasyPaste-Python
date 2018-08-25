@@ -1,6 +1,8 @@
-# Virtualenv
-# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+
 .Python
+
+.txt
+
 [Bb]in
 [Ii]nclude
 [Ll]ib
@@ -8,6 +10,7 @@
 [Ll]ocal
 [Ss]cripts
 [Vv]env
+
 pyvenv.cfg
 .venv
 pip-selfcheck.json

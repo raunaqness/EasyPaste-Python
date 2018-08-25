@@ -1,3 +1,4 @@
+# Housekeeping, don't mind
 import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -21,7 +22,7 @@ def from_android():
 	if request.method == 'POST':
 		form = request.form
 		print(str(form))
-		clipboard.send_to_clipboard(form)
+		clipboard.data_from_android(form)
 		return("POST Succesful")
 
 	if request.method == 'GET':

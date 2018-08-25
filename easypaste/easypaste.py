@@ -9,7 +9,7 @@ import socket
 import time
 import subprocess
 
-from utils import ipaddress, qrimage
+from utils import ipaddress, qrimage, clipboard
 
 class testclass():
 
@@ -152,7 +152,10 @@ class SystemTrayWindow():
 		
 		self.tray.setContextMenu(self.menu)
 
+		# Start Threads
+
 		self.start_flask_thread()
+		self.start_background_thread()
 
 	# Worker Functions and Definitions
 
@@ -165,6 +168,19 @@ class SystemTrayWindow():
 		self.host, _ = ipaddress.get_ip()
 		self.port = 1234
 		app.run(host=self.host, port=self.port)
+
+	# Background Clipboard Checking Functions and Definitions
+
+	def start_background_thread(self):
+		background_worker = Worker(self.background_thread)
+		self.threadpool.start(background_worker)
+
+	def background_thread(self):
+		while True:
+			clipboard.get_from_clipboard()
+			time.sleep(3)
+
+	# Helper Functions
 
 	def open_qrcode_window(self):
 		self.qrcode_window = QRCodeWindow()
