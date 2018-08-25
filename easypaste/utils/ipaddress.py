@@ -19,4 +19,7 @@ def get_ip():
 			final_ip = ip
 			break
 
-	return(final_ip)
+	hostname = subprocess.check_output('hostname', shell=True)
+	hostname = str(hostname)[2:][:-5]
+	
+	return(final_ip, hostname)

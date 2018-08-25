@@ -11,6 +11,13 @@ import subprocess
 
 from utils import ipaddress, qrimage
 
+class testclass():
+
+	def add(self, a, b):
+		return(a+b)
+
+################## Worker Classes ##################
+
 class WorkerSignals(QObject):
 
 	finished = pyqtSignal()
@@ -46,6 +53,8 @@ class Worker(QRunnable):
 		finally:
 			self.signals.finished.emit()  # Done
 
+################## PyQt UI Functions ##################
+
 class QRCodeWindow(QWidget):
  
 	def __init__(self):
@@ -66,8 +75,8 @@ class QRCodeWindow(QWidget):
 		self.vbox = QVBoxLayout()
 
 		# Get QR Code Image
-		ip_address = ipaddress.get_ip()
-		img = qrimage.get_qrimage(ip_address)
+		ip_address, hostname = ipaddress.get_ip()
+		img = qrimage.get_qrimage(ip_address + " | " + hostname)
 
 		# Create QRCode Image Holder
 		self.qrcode_image_holder = QLabel()
@@ -136,7 +145,7 @@ class SystemTrayWindow():
 
 		# Adding Button Actions 
 		self.menu.addAction(self.qrwindow_button)
-		# self.menu.addAction(self.IP_button)
+
 		self.menu.addSeparator()
 		self.menu.addAction(self.about_button)
 		self.menu.addAction(self.quit_button)
@@ -153,21 +162,9 @@ class SystemTrayWindow():
 
 	def flask_thread(self):
 		from helpers.routes import app 
-		self.host = "192.168.0.101"
+		self.host, _ = ipaddress.get_ip()
 		self.port = 1234
 		app.run(host=self.host, port=self.port)
-
-	# Helper Functions	
-		
-	def get_from_clipboard(self):
-		cmd = 'pbpaste'
-		output = subprocess.check_output(cmd, shell=True)
-		return(output)
-
-	def send_to_clipboard(self, message):
-		cmd = 'echo "{}" | pbcopy'.format(message)
-		subprocess.call(cmd, shell=True)
-		print("Sent to clipboard : {}".format(message))
 
 	def open_qrcode_window(self):
 		self.qrcode_window = QRCodeWindow()
@@ -178,11 +175,6 @@ class SystemTrayWindow():
 	def about(self):
 		# TODO
 		pass
-
-class testclass():
-
-	def add(self, a, b):
-		return(a+b)
 
 if __name__ == "__main__":
 	app = QApplication([])

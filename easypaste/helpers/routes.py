@@ -10,8 +10,8 @@ def index():
 	print("GG")
 	return("GG")
 
-@app.route("/android", methods=['GET', 'POST'])
-def android():
+@app.route("/from_android", methods=['GET', 'POST'])
+def from_android():
 	if request.method == 'POST':
 		form = request.form
 		print(str(form))
