@@ -27,3 +27,13 @@ def from_android():
 
 	if request.method == 'GET':
 		return("GET Succesful")
+
+# For Testing
+@app.route("/to_android", methods=['POST'])
+def to_android():
+	if request.method == 'POST':
+		form = request.form
+		# print(str(form))
+		return("Android POST Succesful")
+
+

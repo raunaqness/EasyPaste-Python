@@ -1,7 +1,7 @@
 
 .Python
 
-.txt
+*.txt
 
 [Bb]in
 [Ii]nclude

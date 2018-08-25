@@ -176,8 +176,9 @@ class SystemTrayWindow():
 		self.threadpool.start(background_worker)
 
 	def background_thread(self):
+		time.sleep(5)
 		while True:
-			clipboard.get_from_clipboard()
+			clipboard.data_from_clipboard()
 			time.sleep(3)
 
 	# Helper Functions
