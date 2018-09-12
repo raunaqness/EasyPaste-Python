@@ -17,8 +17,8 @@ def index():
 	print("GG")
 	return("GG")
 
-@app.route("/from_android", methods=['GET', 'POST'])
-def from_android():
+@app.route("/data_from_android", methods=['GET', 'POST'])
+def data_from_android():
 	if request.method == 'POST':
 		form = request.form
 		print(str(form))
@@ -27,6 +27,15 @@ def from_android():
 
 	if request.method == 'GET':
 		return("GET Succesful")
+
+@app.route("/ack_from_android", methods=['GET', 'POST'])
+def ack_from_android():
+	if request.method == 'POST':
+		form = request.form
+		print(str(form))
+		clipboard.ack_from_android(form)
+		return("POST Succesful")
+
 
 # For Testing
 @app.route("/to_android", methods=['POST'])

@@ -14,21 +14,31 @@ from utils import ipaddress
 
 def data_from_android(form):
 	try:
-		
 		# For Clipboard
-		message, timestamp = parse_form(form)
-
-		# For DB
-		data = {}
-		data['message'] = message
-		data['timestamp'] = timestamp
+		data = parse_form(form)
 
 		# Bhejde
-		send_to_clipboard(message)
+		send_to_clipboard(data['message'])
 		send_to_db(data)
 				
 	except Exception as e:
-		raiprint("Exception at data_from_android()")
+		print("Exception at data_from_android()")
+		print("e = {}".format(e))
+
+def ack_from_android(form):
+	try:
+		form = parse_form(form)
+		data = get_from_db()
+
+		# For DB
+		data['android_ip'] = form['message'][0]
+		data['timestamp'] = form['timestamp'][0]
+
+		# Bhejde
+		send_to_db(data)
+				
+	except Exception as e:
+		print("Exception at ack_from_android()")
 		print("e = {}".format(e))
 
 def data_from_clipboard():
@@ -41,7 +51,8 @@ def data_from_clipboard():
 	# print(get_from_db())
 
 	if(get_from_db() is not None):
-		message, timestamp = get_from_db()
+		data = get_from_db()
+		message, timestamp = data['message'], data['timestamp']
 
 		print("message-" + str((message)))
 		print("output-" + str((output)))
@@ -52,7 +63,6 @@ def data_from_clipboard():
 		else:
 			print("New Text in Clipboard")
 
-			data = {}
 			data['message'] = output
 			data['timestamp'] = get_timestamp()
 
@@ -87,9 +97,9 @@ def get_from_db():
 	try:
 		with open(parentdir + '/data.txt') as json_file:  
 			data = json.load(json_file)
-			message = data['message']
-			timestamp = data['timestamp']
-			return(message, timestamp)
+			# message = data['message']
+			# timestamp = data['timestamp']
+			return(data)
 	
 	except Exception as e:
 		print("Exception at get_from_db()")
@@ -126,10 +136,10 @@ def send_to_clipboard(message):
 
 def parse_form(form):
 	try:
-		d = dict(form)
-		message = d['message'][0]
-		timestamp = d['timestamp'][0]
-		return(message, timestamp)
+		# d = dict(form)
+		# message = d['message'][0]
+		# timestamp = d['timestamp'][0]
+		return(dict(form))
 	
 	except Exception as e:
 		print("Exception at parse_form()")
