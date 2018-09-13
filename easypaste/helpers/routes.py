@@ -17,28 +17,20 @@ def index():
 	print("GG")
 	return("GG")
 
-@app.route("/data_from_android", methods=['GET', 'POST'])
-def data_from_android():
+@app.route("/payload_from_android", methods=['GET', 'POST'])
+def payload_from_android():
 	if request.method == 'POST':
 		form = request.form
 		print(str(form))
-		clipboard.data_from_android(form)
+		clipboard.payload_from_android(form)
 		return("POST Succesful")
 
 	if request.method == 'GET':
 		return("GET Succesful")
 
-@app.route("/ack_from_android", methods=['GET', 'POST'])
-def ack_from_android():
-	if request.method == 'POST':
-		form = request.form
-		print(str(form))
-		clipboard.ack_from_android(form)
-		return("POST Succesful")
-
 
 # For Testing
-@app.route("/to_android", methods=['POST'])
+@app.route("/payload")
 def to_android():
 	if request.method == 'POST':
 		form = request.form
