@@ -3,8 +3,8 @@ import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 
-from werkzeug import secure_filename
-
+import time
+import base64
 import datetime
 import requests
 import subprocess
@@ -15,7 +15,7 @@ from utils import ipaddress
 ################## Main functions ##################
 
 def payload_from_android(payload, files):
-	print(parentdir)
+
 	try:
 		# For Clipboard
 		payload = dict(payload)
@@ -26,7 +26,7 @@ def payload_from_android(payload, files):
 
 		if('Acknowledgement' in payload_type):
 			# Connection established. Acknowledgement received
-			android_ip = payload['data'][0]
+			android_ip = payload['payload_data'][0]
 			print("android_ip-", android_ip)
 
 			data = get_from_db()
@@ -38,20 +38,13 @@ def payload_from_android(payload, files):
 
 		elif('ClipText' in payload_type):
 			# Clipboard Text. Send to Clipboard
-
-
+			
 			pass
 
 		elif('Image' in payload_type):
-			# Image sent. TODO
-
-			print(str(payload))
-			f = files['payload_data']
-			print(str(f))
-			save_image_file(f)
-
-
-			
+			# Decode to get Image from String
+			image = base64.b64decode(payload['payload_data'][0])
+			save_image_file(image)
 
 		else:
 			print("Unknown Payload Type")
@@ -152,9 +145,12 @@ def save_image_file(image):
 	if(not os.path.exists("saved_images")):
 		os.makedirs("saved_images")
 
-	path = os.path.join(os.getcwd(), "saved_images", image.filename)
-	print(path)
-	image.save(path)
+	filename = str(time.strftime("%Y-%m-%d-%H-%M-%S")) + ".jpg"
+	path = os.path.join(os.getcwd(), "saved_images", filename)
+
+	with open(path, 'wb') as f:
+		f.write(image)
+
 	subprocess.run("cd saved_images && open .", shell=True)
 
 

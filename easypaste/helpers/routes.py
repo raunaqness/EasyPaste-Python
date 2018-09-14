@@ -22,7 +22,7 @@ def payload_from_android():
 	if request.method == 'POST':
 		form = request.form
 		f = request.files
-		print(str(form))
+		# print(str(form))
 		clipboard.payload_from_android(form, f)
 		return("POST Succesful")
 
