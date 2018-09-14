@@ -2,6 +2,8 @@
 .Python
 
 *.txt
+*.jpg
+*.png
 
 [Bb]in
 [Ii]nclude

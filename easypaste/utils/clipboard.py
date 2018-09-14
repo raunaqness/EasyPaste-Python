@@ -3,6 +3,8 @@ import os,sys,inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 
+from werkzeug import secure_filename
+
 import datetime
 import requests
 import subprocess
@@ -12,7 +14,7 @@ from utils import ipaddress
 
 ################## Main functions ##################
 
-def payload_from_android(payload):
+def payload_from_android(payload, files):
 	print(parentdir)
 	try:
 		# For Clipboard
@@ -37,18 +39,24 @@ def payload_from_android(payload):
 		elif('ClipText' in payload_type):
 			# Clipboard Text. Send to Clipboard
 
+
 			pass
 
 		elif('Image' in payload_type):
 			# Image sent. TODO
 
-			pass
+			print(str(payload))
+			f = files['payload_data']
+			print(str(f))
+			save_image_file(f)
+
+
+			
 
 		else:
 			print("Unknown Payload Type")
 
 		
-
 		# Bhejde
 		# send_to_clipboard(data['message'])
 		# send_to_db(data)
@@ -57,21 +65,6 @@ def payload_from_android(payload):
 		print("Exception at data_from_android()")
 		print("e = {}".format(e))
 
-def ack_from_android(form):
-	try:
-		form = dict(form)
-		data = get_from_db()
-
-		# For DB
-		data['android_ip'] = form['message'][0]
-		data['timestamp'] = form['timestamp'][0]
-
-		# Bhejde
-		send_to_db(data)
-				
-	except Exception as e:
-		print("Exception at ack_from_android()")
-		print("e = {}".format(e))
 
 def data_from_clipboard():
 	try:
@@ -101,7 +94,7 @@ def data_from_clipboard():
 
 				# Send to Android
 
-				send_to_android("MSG", output)
+				send_to_android("ClipText", output)
 
 				# Save to db
 				send_to_db(data)
@@ -114,23 +107,33 @@ def data_from_clipboard():
 def send_to_android(payload_type, payload_data):
 
 	'''
-	Payload should be one of the following types = 'ACK' or 'MSG'
+	Payload should be one of the following types = 'Acknowledgement' or 'ClipText' or 'Image'
 	'''
 
 	try:
-		print("Sending to Android")
 		data = get_from_db()
 		android_ip = data['android_ip']
-		
-		url = "http://" + android_ip + ":8080"
+		print("__IP__", android_ip)
 
 		payload = {}
 		payload['payload_type'] = payload_type
-		payload['payload_data'] = payload_data
+		print("Payload_to_Android", str(payload_type)) 
+
+		if('Acknowledgement' in payload_type):
+			payload['payload_data'] = android_ip
+
+		elif('ClipText' in payload_type):
+			payload['payload_data'] = payload_data
+
+		elif('Image' in payload_type):
+			payload['payload_data'] = "CaptureImage"
+
+		else:
+			print("Unknown Payload Type")
+
 		json.dumps(payload)
 
-		print("Payload_to_Android", str())
-
+		url = "http://" + android_ip + ":8080"
 		headers = { 'Content-Type': 'application/json' }
 
 		r = requests.post(url = url, data = payload, headers = headers)
@@ -143,6 +146,17 @@ def send_to_android(payload_type, payload_data):
 
 
 ################## Helper Functions ##################
+
+def save_image_file(image):
+	
+	if(not os.path.exists("saved_images")):
+		os.makedirs("saved_images")
+
+	path = os.path.join(os.getcwd(), "saved_images", image.filename)
+	print(path)
+	image.save(path)
+	subprocess.run("cd saved_images && open .", shell=True)
+
 
 def send_to_db(data):
 	print("Sending new data to DB")

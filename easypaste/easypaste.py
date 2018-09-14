@@ -137,6 +137,9 @@ class SystemTrayWindow():
 		self.qrwindow_button = QAction("Connect")
 		self.qrwindow_button.triggered.connect(self.open_qrcode_window)
 
+		self.take_photo_button = QAction("Take Photo")
+		self.take_photo_button.triggered.connect(self.take_photo)
+
 		self.about_button = QAction("About")
 		self.about_button.triggered.connect(self.about)
 
@@ -145,6 +148,9 @@ class SystemTrayWindow():
 
 		# Adding Button Actions 
 		self.menu.addAction(self.qrwindow_button)
+
+		self.menu.addSeparator()
+		self.menu.addAction(self.take_photo_button)
 
 		self.menu.addSeparator()
 		self.menu.addAction(self.about_button)
@@ -182,6 +188,9 @@ class SystemTrayWindow():
 			time.sleep(3)
 
 	# Helper Functions
+
+	def take_photo(self):
+		clipboard.send_to_android("Image", "Take Photo")
 
 	def open_qrcode_window(self):
 		self.qrcode_window = QRCodeWindow()
