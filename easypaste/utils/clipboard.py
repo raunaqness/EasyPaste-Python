@@ -151,7 +151,7 @@ def save_image_file(image):
 	with open(path, 'wb') as f:
 		f.write(image)
 
-	subprocess.run("cd saved_images && open .", shell=True)
+	subprocess.run("cd saved_images && open -R {}".format(filename), shell=True)
 
 
 def send_to_db(data):
