@@ -38,8 +38,16 @@ def payload_from_android(payload, files):
 
 		elif('ClipText' in payload_type):
 			# Clipboard Text. Send to Clipboard
+			cliptext = payload['payload_data'][0]
+			print("cliptext___", cliptext)
+			send_to_clipboard(cliptext)
+
+			# Save changes in DB
+			data = get_from_db()
+			data['cliptext'] = cliptext
+			data['timestamp'] = get_timestamp()
+			send_to_db(data)
 			
-			pass
 
 		elif('Image' in payload_type):
 			# Decode to get Image from String

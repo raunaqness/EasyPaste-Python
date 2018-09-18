@@ -2,12 +2,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+import traceback
+import sys
 import time
-import traceback, sys, os
-
-import socket  
-import time
-import subprocess
 
 from utils import ipaddress, qrimage, clipboard
 
@@ -56,11 +53,11 @@ class Worker(QRunnable):
 ################## PyQt UI Functions ##################
 
 class QRCodeWindow(QWidget):
- 
+
 	def __init__(self):
 		super().__init__()
 		self.initUI()
- 
+
 	def initUI(self):
 		
 		# Put Window in the Centre of the screen
@@ -108,7 +105,7 @@ class QRCodeWindow(QWidget):
 		self.main_window.setLayout(self.vbox)
 		# self.main_window.setWindowFlags(Qt.FramelessWindowHint)
 		self.main_window.show()
- 
+
 	def close_window(self):
 		self.main_window.hide()
 		# self.show()
@@ -117,7 +114,7 @@ class QRCodeWindow(QWidget):
 		if(b is not 0):
 			return(a/b)
 
-class SystemTrayWindow():
+class SystemTrayWindow:
 
 	def __init__(self):
 
