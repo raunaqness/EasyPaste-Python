@@ -1,9 +1,13 @@
 
 .Python
 
+*.spec
+
 *.txt
 *.jpg
 *.png
+
+[Bb]uild
 
 [Bb]in
 [Ii]nclude
