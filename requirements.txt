@@ -15,7 +15,7 @@ PyInstaller==3.4
 PyQt5==5.11.2
 PyQt5-sip==4.19.12
 qrcode==6.0
-requests==2.19.1
+requests==2.20.0
 six==1.11.0
 urllib3==1.23
 Werkzeug==0.14.1
