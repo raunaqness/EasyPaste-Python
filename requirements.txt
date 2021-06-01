@@ -17,5 +17,5 @@ PyQt5-sip==4.19.12
 qrcode==6.0
 requests==2.19.1
 six==1.11.0
-urllib3==1.23
+urllib3==1.26.5
 Werkzeug==0.14.1
